@@ -11,5 +11,4 @@ FOREACH (F ${SRC_FILES})
 ENDFOREACH (F)
 
 add_library(crypto_framework SHARED ${SRC_FILES})
-target_include_directories(crypto_framework PRIVATE crypto/include)
-target_include_directories(crypto_framework INTERFACE include)
+target_include_directories(crypto_framework PRIVATE include)
