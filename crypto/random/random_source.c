@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <sys/random.h>
 #elif defined(_WIN32)
-// Windows entropy random source header
+#include <stdlib.h>
 #else
 // Linux entropy random source header
 #include <unistd.h>
@@ -21,9 +21,14 @@ int get_entropy(uint8_t *result, uint32_t length) {
 #if defined(__APPLE__)
     result_code = getentropy(result, length);
 #elif defined(_WIN32)
-    // Windows entropy random source func
-    // actually i dont know the correct usage
-    result_code = getrandom();
+    uint32_t offset = 0;
+
+    while(offset < length) {
+        result[offset] = rand();
+        offset++;
+    }
+
+    result_code = 0;
 #else
     // Linux entropy random source func
     result_code = getrandom(result, length, GRND_RANDOM);
