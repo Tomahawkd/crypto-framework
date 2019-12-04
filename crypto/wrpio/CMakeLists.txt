@@ -1,0 +1,2 @@
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} LIST)
+set(SRC_FILES ${SRC_FILES} ${LIST} PARENT_SCOPE)
