@@ -61,4 +61,5 @@ void WRPIO_free(WRPIO *io) {
 
     if (io->meth->cleanup) io->meth->cleanup(io);
     if (io->meth->ctx_size > 0) free(io->meth_data);
+    free(io);
 }
