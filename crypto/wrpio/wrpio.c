@@ -19,10 +19,10 @@ WRPIO *WRPIO_new() {
 
 ERRNO WRPIO_init(WRPIO *io, const WRPIO_METH *method, const char *target, uint8_t mode) {
 
-    if (io == NULL || method == NULL) return ERRNO_WRPIO_NULLPTR;
+    if (io == NULL || method == NULL || target == NULL) return ERRNO_WRPIO_NULLPTR;
     if (strlen(target) > WRPIO_MAX_TARGET_LENGTH) return ERRNO_WRPIO_MAX_LENGTH_REACHED;
     io->meth = method;
-    if(target != NULL) strncpy(io->target, target, WRPIO_MAX_TARGET_LENGTH - 1);
+    strncpy(io->target, target, WRPIO_MAX_TARGET_LENGTH);
     io->mode = mode;
     if (io->meth_data) free(io->meth_data);
     if (method->ctx_size > 0) io->meth_data = malloc(method->ctx_size);
