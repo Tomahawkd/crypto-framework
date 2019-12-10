@@ -32,11 +32,10 @@ static ERRNO write(WRPIO *io, uint8_t *buf, uint32_t len) {
 
     WRPIO_FILE *data = (WRPIO_FILE *) io->meth_data;
     if (data->file == NULL) return ERRNO_WRPIO_FILE_NULLPTR;
-    if (io->mode & WRPIO_MODE_WRITE) {
+    if (!(io->mode & WRPIO_MODE_WRITE)) return ERRNO_WRPIO_ACTION_NOT_SUPPORT;
 
-        if (len > fwrite(buf, 1, len, data->file)) return ERRNO_WRPIO_WRITE_ERR;
-        else return ERRNO_OK;
-    } else return ERRNO_WRPIO_ACTION_NOT_SUPPORT;
+    if (len > fwrite(buf, 1, len, data->file)) return ERRNO_WRPIO_WRITE_ERR;
+    return ERRNO_OK;
 }
 
 static ERRNO read(WRPIO *io, uint8_t *buf, uint32_t *len) {
@@ -45,16 +44,13 @@ static ERRNO read(WRPIO *io, uint8_t *buf, uint32_t *len) {
     uint32_t real_len = 0;
 
     if (data->file == NULL) return ERRNO_WRPIO_FILE_NULLPTR;
-    if (io->mode & WRPIO_MODE_READ) {
+    if (!(io->mode & WRPIO_MODE_READ)) return ERRNO_WRPIO_ACTION_NOT_SUPPORT;
 
-        real_len = fread(buf, 1, *len, data->file);
-        if (*len > real_len) {
-            if (feof(data->file)) {
-                *len = real_len;
-                return ERRNO_WRPIO_EOF_REACHED;
-            } else return ERRNO_WRPIO_READ_ERR;
-        } else return ERRNO_OK;
-    } else return ERRNO_WRPIO_ACTION_NOT_SUPPORT;
+    real_len = fread(buf, 1, *len, data->file);
+    if (*len <= real_len) return ERRNO_OK;
+    if (!feof(data->file)) return ERRNO_WRPIO_READ_ERR;
+    *len = real_len;
+    return ERRNO_WRPIO_EOF_REACHED;
 }
 
 static ERRNO flush(WRPIO *io) {

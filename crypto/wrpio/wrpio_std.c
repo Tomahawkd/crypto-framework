@@ -21,12 +21,10 @@ static ERRNO write(WRPIO *io, uint8_t *buf, uint32_t len) {
 static ERRNO read(WRPIO *io, uint8_t *buf, uint32_t *len) {
     uint32_t real_len = fread(buf, 1, *len, stdin);
 
-    if (*len > real_len) {
-        if (feof(stdin)) {
-            *len = real_len;
-            return ERRNO_WRPIO_EOF_REACHED;
-        } else return ERRNO_WRPIO_READ_ERR;
-    } else return ERRNO_OK;
+    if (*len <= real_len) return ERRNO_OK;
+    if (!feof(stdin)) return ERRNO_WRPIO_READ_ERR;
+    *len = real_len;
+    return ERRNO_WRPIO_EOF_REACHED;
 }
 
 static ERRNO flush(WRPIO *io) {
