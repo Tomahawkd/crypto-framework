@@ -7,6 +7,9 @@
 #include <stdio.h>
 
 static ERRNO init(WRPIO *io) {
+    // Due to test the target[0] whether is 0 in wrpio to detect err, we need to
+    // set a non-0 here to avoid it
+    io->target[0] = 1;
     return ERRNO_OK;
 }
 
