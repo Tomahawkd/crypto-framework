@@ -110,6 +110,7 @@ struct wrp_key_ctx_st {
     uint32_t mode;
     uint8_t random_pool[WRP_MAX_RANDPOOL_LENGTH];
     uint8_t seed[WRP_MAX_KEY_LENGTH];
+    uint32_t seedlen;
     uint32_t bits;
     uint32_t flag;
     void *key_data;

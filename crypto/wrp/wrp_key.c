@@ -17,6 +17,7 @@ WRP_KEY_CTX *WRP_KEY_CTX_new() {
     ctx->key_data = NULL;
     ctx->flag = 0;
     ctx->use_count = 0;
+    ctx->seedlen = 0;
     memset(ctx->random_pool, 0, WRP_MAX_RANDPOOL_LENGTH);
     memset(ctx->seed, 0, WRP_MAX_KEY_LENGTH);
     return ctx;
@@ -105,6 +106,7 @@ ERRNO WRP_KEY_ctrl(WRP_KEY_CTX *ctx, uint32_t ctrl_flag, void *data, uint32_t da
 			if (data_len < ctx->bits/8)
 				return ERRNO_WRP_BUF_TOO_SMALL;
             memcpy(ctx->seed, data, data_len);
+            ctx->seedlen = data_len;
             WRP_KEY_set_flag(ctx, WRP_KEY_FLAG_HAS_SEED, 1);
             return ERRNO_OK;    
         }
@@ -148,6 +150,7 @@ void WRP_KEY_CTX_free(WRP_KEY_CTX *ctx) {
         ctx->key->cleanup(ctx);
     }
 
+    ctx->seedlen = 0;
     memset(ctx->random_pool, 0, WRP_MAX_RANDPOOL_LENGTH);
     memset(ctx->seed, 0, WRP_MAX_KEY_LENGTH);
     if (ctx->key->ctx_size > 0) free(ctx->key_data);
